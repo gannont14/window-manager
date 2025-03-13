@@ -14,4 +14,6 @@ void drawInWindow(Window win);
 
 void showWindow(Window win);
 
+Window getCurrentlyFocusedWindow(void);
+
 #endif // !WINDOW_UTILS_H

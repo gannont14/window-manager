@@ -4,7 +4,7 @@
 #include <X11/cursorfont.h>
 #include <stdlib.h>
 #include "key_binds.h"
-#include "workspace.h"
+#include "window_utils.h"
 
 Display *dsp;
 Window root;
@@ -29,6 +29,7 @@ void handleConfigureRequest(XEvent e)
 
   /*changes.width = 1000;*/
   /*changes.height = 500;*/
+
   changes.border_width = req->border_width;
   changes.sibling = req->above;
   changes.stack_mode = req->detail;
@@ -47,16 +48,9 @@ void handleMapRequest(XEvent e)
 
   XMapWindow(dsp, window);
 
-  XRaiseWindow(dsp, window); // raise the window to the top, mostly for floating
-
-  XSetInputFocus(dsp,
-                 window,
-                 RevertToPointerRoot,
-                 CurrentTime); // set focus to the new window
-  
+  XRaiseWindow(dsp, window); // raise the window to the top
+  XSetInputFocus(dsp, window, RevertToPointerRoot, CurrentTime); // set focus to the new window
   XSync(dsp, False);
-  addWindowToWorkspace(activeWorkspaceId, window);
-  applyWorkspaceLayout(activeWorkspaceId);
 
   printf("Window mapped: %lu\n", window);
 }
@@ -67,7 +61,6 @@ void handleKeyPress(XEvent e)
   unsigned int mods = e.xkey.state;
 
   // look up in our keyBinds
-  printf("Sym: %s\n", XKeysymToString(sym));
   for(int i = 0; i < numKeyBinds; i++)
   {
     KeyBind bind = keyBinds[i];
@@ -79,7 +72,7 @@ void handleKeyPress(XEvent e)
       return;
     }
 
-    /*printf("No Handler found for this bind\n");*/
+    printf("No Handler found for this bind\n");
   }
 }
 
@@ -136,12 +129,6 @@ int main(void)
   initKeyBinds();
   grabAllKeys();
 
-  // generate the first workspace
-  int ret;
-  ret = addWorkSpace(1);
-  printf("Creating workspace: %d\n", ret);
-  activeWorkspaceId = 1;
-
   XEvent e;
   for(;;)
   {
@@ -165,9 +152,9 @@ int main(void)
           XSync(dsp, 0);
           Window mainWindow = e.xbutton.window;
           Window subWindow = e.xbutton.subwindow;
-          /*printf("Pressed key in %lu window and %lu wubwindow\n", */
-          /*       mainWindow, subWindow);*/
-          /*puts("button pressed");*/
+          printf("Pressed key in %lu window and %lu wubwindow\n", 
+                 mainWindow, subWindow);
+          puts("button pressed");
           break;
         }
       case KeyPress:
@@ -177,7 +164,7 @@ int main(void)
           break;
         }
       default:
-        /*puts("Unexpected event");*/
+        puts("Unexpected event");
         break;
     }
 

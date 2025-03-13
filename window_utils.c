@@ -59,3 +59,13 @@ void showWindow(Window win)
   XFlush(dsp);
 }
 
+Window getCurrentlyFocusedWindow(void)
+{
+  Window focused = None;
+  int revert_to;
+
+  XGetInputFocus(dsp, &focused, &revert_to);
+
+  return focused;
+}
+

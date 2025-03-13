@@ -14,14 +14,55 @@ int numKeyBinds = 0;
 
 int initKeyBinds(void)
 {
+  unsigned int UserModKey = Mod4Mask;
+  //  #################################
+  //  KEYBINDINGS
+  //  #################################
 
-  // create the key bindings here
+  //Terminal
   keyBinds[numKeyBinds].sym = XStringToKeysym("t");
-  keyBinds[numKeyBinds].mods = ControlMask;
+  keyBinds[numKeyBinds].mods = UserModKey ;
   keyBinds[numKeyBinds].handler = launchTerminal;
   keyBinds[numKeyBinds].description = "launches a terminal";
   numKeyBinds++;
 
+  //Firefox                                                     Doesn't seem to wrok well with XEPHYR session
+  keyBinds[numKeyBinds].sym = XStringToKeysym("b");
+  keyBinds[numKeyBinds].mods = UserModKey;
+  keyBinds[numKeyBinds].handler = launchFirefox;
+  keyBinds[numKeyBinds].description = "launches firefox";
+  numKeyBinds++;
+
+  // Cycle through windows keybinds
+  // cycle right
+  keyBinds[numKeyBinds].sym = XStringToKeysym("l");
+  keyBinds[numKeyBinds].mods = UserModKey;
+  keyBinds[numKeyBinds].handler = cycleWindowRight;
+  keyBinds[numKeyBinds].description = "Cycles window the the right";
+  numKeyBinds++;
+
+  // cycle left
+  keyBinds[numKeyBinds].sym = XStringToKeysym("h");
+  keyBinds[numKeyBinds].mods = UserModKey;
+  keyBinds[numKeyBinds].handler = cycleWindowLeft;
+  keyBinds[numKeyBinds].description = "Cycles window the the left";
+  numKeyBinds++;
+
+  // cycle up
+  keyBinds[numKeyBinds].sym = XStringToKeysym("k");
+  keyBinds[numKeyBinds].mods = UserModKey;
+  keyBinds[numKeyBinds].handler = cycleWindowUp;
+  keyBinds[numKeyBinds].description = "Cycles window Up";
+  numKeyBinds++;
+  
+  // cycle down
+  keyBinds[numKeyBinds].sym = XStringToKeysym("j");
+  keyBinds[numKeyBinds].mods = UserModKey;
+  keyBinds[numKeyBinds].handler = cycleWindowDown;
+  keyBinds[numKeyBinds].description = "Cycles window down";
+  numKeyBinds++;
+
+  printf("Num keybinds loaded: %d\n", numKeyBinds);
   return EXIT_SUCCESS;
 
 }
@@ -34,8 +75,8 @@ void launchApplication(const char* command)
 
   if(pid < 0) fprintf(stderr, "Error Launching application: %s", command);
   else if (pid == 0) { // child proccess
-    close(1);
-    close(2);
+    /*close(1);*/
+    /*close(2);*/
     // close display connection in child
     puts("Hello from child");
     if(dsp)
