@@ -20,5 +20,6 @@ extern int numKeyBinds;
 
 int initKeyBinds(void);
 void launchApplication(const char* command);
+void closeCurrentWindow(Window currentWindow);
 
 #endif // !KEY_BINDS_H

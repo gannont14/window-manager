@@ -3,6 +3,7 @@
 
 void launchTerminal(void);
 void launchFirefox(void);
+void closeWindow(void);
 
 void cycleWindowLeft(void);
 void cycleWindowRight(void);

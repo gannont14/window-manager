@@ -17,6 +17,22 @@ void launchFirefox(void)
   /*launchApplication("export DISPLAY:=1 && firefox");*/
 }
 
+void closeWindow(void)
+{
+  Window focusedWindow;
+  int revertTo;
+
+  // get the right focus
+  XGetInputFocus(dsp, &focusedWindow, &revertTo);
+
+  // make sure that it is a closeable window (i.e. not the root)
+  if(focusedWindow != None && focusedWindow != root)
+  {
+    closeCurrentWindow(focusedWindow);
+  }
+
+}
+
 // cycling through windows
 void cycleWindowLeft(void) { focusNextWindowTiled(activeWorkspaceId, DIRECTION_LEFT); }
 void cycleWindowRight(void) { focusNextWindowTiled(activeWorkspaceId, DIRECTION_RIGHT); }

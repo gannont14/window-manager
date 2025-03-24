@@ -61,6 +61,14 @@ void handleMapRequest(XEvent e)
   printf("Window mapped: %lu\n", window);
 }
 
+void handleDestroyNotify(XEvent e)
+{
+  // find the window that was destroyed
+  Window destroyedWindow = e.xdestroywindow.window; 
+  removeWindowFromWorkspace(destroyedWindow);
+  applyWorkspaceLayout(activeWorkspaceId);
+}
+
 void handleKeyPress(XEvent e)
 {
   KeySym sym = XLookupKeysym(&e.xkey, 0);
@@ -152,6 +160,12 @@ int main(void)
       case MapRequest:
         {
           handleMapRequest(e);
+          break;
+        }
+      case DestroyNotify:
+        {
+          printf("Handling window destruction\n");
+          handleDestroyNotify(e);
           break;
         }
       case ConfigureRequest:

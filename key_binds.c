@@ -19,6 +19,14 @@ int initKeyBinds(void)
   //  KEYBINDINGS
   //  #################################
 
+
+  // close window
+  keyBinds[numKeyBinds].sym = XStringToKeysym("q");
+  keyBinds[numKeyBinds].mods = UserModKey ;
+  keyBinds[numKeyBinds].handler = closeWindow;
+  keyBinds[numKeyBinds].description = "Closes the current window";
+  numKeyBinds++;
+
   //Terminal
   keyBinds[numKeyBinds].sym = XStringToKeysym("t");
   keyBinds[numKeyBinds].mods = UserModKey ;
@@ -65,6 +73,24 @@ int initKeyBinds(void)
   printf("Num keybinds loaded: %d\n", numKeyBinds);
   return EXIT_SUCCESS;
 
+}
+
+void closeCurrentWindow(Window currentWindow)
+{
+  Atom wm_protocols = XInternAtom(dsp, "WM_PROTOCOLS", False);
+  Atom wm_delete = XInternAtom(dsp, "WM_DELETE_WINDOW", False);
+
+  XEvent ev;
+  ev.type = ClientMessage;
+  ev.xclient.window = currentWindow;
+  ev.xclient.message_type = wm_protocols;
+  ev.xclient.format = 32; // ??
+  ev.xclient.data.l[0] = wm_delete;
+  ev.xclient.data.l[1] = CurrentTime;
+
+  XSendEvent(dsp, currentWindow, False, NoEventMask, &ev);
+
+  XFlush(dsp);
 }
 
 void launchApplication(const char* command)

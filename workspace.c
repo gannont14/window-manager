@@ -11,6 +11,48 @@ Workspace workspaces[MAX_NUM_WORKSPACES];
 int numWorkspaces = 0;
 int activeWorkspaceId;
 
+// could potentially see bug if window from another workspace destroyed?
+void removeWindowFromWorkspace(Window destroyedWindow) 
+{
+  Workspace *ws = NULL;
+  for(int i = 0; i < numWorkspaces; i++)
+  {
+    if(workspaces[i].id == activeWorkspaceId)
+    {
+      ws = &workspaces[i];
+      break;
+    }
+  }
+
+  // found workspace window was deleted from
+  int destroyedWindowIndex = -1;
+  for(int i = 0; i < ws->numWindows; i++)
+  {
+    if(ws->workspaceWindows[i] == destroyedWindow) 
+    {
+      // make that window as null for now
+      printf("Found window that is to be destroyed\n");
+      destroyedWindowIndex = i;
+    }
+  }
+
+  if(destroyedWindowIndex == -1)
+  {
+    puts("No window found");
+    return;
+  }
+
+  // handle when the window is found
+  // shift over all of the windows overriding the deleted one
+  puts("Shifting windows back");
+  for(int i = destroyedWindowIndex; i < ws->numWindows - 1; i++)
+  {
+    ws->workspaceWindows[i] = ws->workspaceWindows[i + 1];
+    printf("Shifting window at index [%d] to [%d]\n", i , i+1);
+  }
+  ws->numWindows--;
+}
+
 void focusNextWindowTiled(int workspaceId, FocusDirection direction)
 {
   printf("Focusing next window\n");
@@ -180,6 +222,7 @@ void applyWorkspaceLayout(int workspaceId)
   }
 
   Workspace ws = workspaces[workspaceInd];
+  printf("Applying layout to %d windows\n", ws.numWindows);
   switch (ws.layout) {
     case LAYOUT_TILED:
       applyTiledLayout(ws.numWindows, ws.workspaceWindows);

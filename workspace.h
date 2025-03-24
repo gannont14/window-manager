@@ -32,5 +32,6 @@ int addWindowToWorkspace(int workspaceId, Window window);
 void applyWorkspaceLayout(int workspaceId);
 void focusNextWindowTiled(int workspaceId,
                           FocusDirection direction);
+void removeWindowFromWorkspace(Window destroyedWindow);
 
 #endif // !WINDOW_LAYOUT_H
